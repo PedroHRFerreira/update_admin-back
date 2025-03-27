@@ -11,6 +11,7 @@ class ProductsController extends Controller
         $data = [
             'products' => Products::all(),
             'status' => 'success',
+            'message' => 'Produtos carregados com sucesso',
             'code' => 200
         ];
         
@@ -21,6 +22,7 @@ class ProductsController extends Controller
         return response()->json([
             'products' => [],
             'status' => 'error',
+            'message' => 'Nenhum produto encontrado',
             'code' => 404
         ]);
     }
@@ -41,6 +43,7 @@ class ProductsController extends Controller
             return response()->json([
                 'product' => $product,
                 'status'  => 'success',
+                'message' => 'Produto criado com sucesso',
                 'code'    => 200
             ], 200);
         }
