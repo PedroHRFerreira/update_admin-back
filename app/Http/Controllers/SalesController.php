@@ -33,45 +33,37 @@ class SalesController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        //
-    }
+        $validated = $request->validate([
+            'id_user' => 'required|integer',
+            'month' => 'required|string',
+            'value' => 'required|numeric',
+            'quantity' => 'required|numeric',
+            'name' => 'required|string',
+            'description' => 'required|string',
+        ]);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Sales $sales)
-    {
-        //
-    }
+        $sales = Sales::create($validated);
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Sales $sales)
-    {
-        //
-    }
+        if(!$sales){
+            return response()->json([
+                'sales' => [],
+                'status' => 'error',
+                'message' => 'Erro ao criar venda',
+                'code' => 422
+            ], 422);
+        } 
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Sales $sales)
-    {
-        //
+        return response()->json([
+            'sales' => $sales,
+            'status' => 'success',
+            'message' => 'Vendas carregados com sucesso',
+            'code' => 200
+        ]);
     }
-
     /**
      * Remove the specified resource from storage.
      */

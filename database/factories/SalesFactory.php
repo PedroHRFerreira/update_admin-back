@@ -21,6 +21,7 @@ class SalesFactory extends Factory
             'id_user' => User::inRandomOrder()->value('id'), 
             'name' => fake()->name(),
             'month' => fake()->unique()->monthName(),
+            'quantity' => fake()->randomNumber(),
             'value' => fake()->randomFloat(2, 0, 100),
             'description' => fake()->text(),
         ];
