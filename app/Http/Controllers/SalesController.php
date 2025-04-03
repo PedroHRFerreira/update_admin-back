@@ -38,7 +38,6 @@ class SalesController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'id_user' => 'required|integer',
             'month' => 'required|string',
             'value' => 'required|numeric',
             'quantity' => 'required|numeric',

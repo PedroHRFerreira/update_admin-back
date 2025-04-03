@@ -18,7 +18,6 @@ class SalesFactory extends Factory
     public function definition(): array
     {
         return [
-            'id_user' => User::inRandomOrder()->value('id'), 
             'name' => fake()->name(),
             'month' => fake()->unique()->monthName(),
             'quantity' => fake()->randomNumber(),

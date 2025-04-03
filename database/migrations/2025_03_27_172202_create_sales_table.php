@@ -13,9 +13,6 @@ return new class extends Migration
     {
         Schema::create('sales', function (Blueprint $table) {
             $table->id();
-
-            $table->foreignId('id_user')->constrained('users')->onDelete('cascade')->nullable();
-
             $table->string('month');
             $table->integer('quantity');
             $table->float('value');
