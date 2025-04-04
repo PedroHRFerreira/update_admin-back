@@ -12,7 +12,6 @@ class Sales extends Model
     protected $table = 'sales';
 
     protected $fillable = [
-        'id_user',
         'month',
         'value',
         'quantity',
