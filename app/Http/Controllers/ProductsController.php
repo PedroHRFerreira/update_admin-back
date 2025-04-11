@@ -7,16 +7,30 @@ use App\Models\Products;
 
 class ProductsController extends Controller
 {
-    public function index(){
-        $data = [
-            'products' => Products::all(),
-            'status' => 'success',
-            'message' => 'Produtos carregados com sucesso',
-            'code' => 200
-        ];
+    public function index(Request $request){
+        $query = Products::query();
+
+        if ($request->has('name')) {
+            $query->where('name', 'like', '%' . $request->name . '%');
+        }
+    
+        if ($request->has('price')) {
+            $query->where('price', $request->price);
+        }
+    
+        if ($request->has('quantity')) {
+            $query->where('quantity', $request->quantity);
+        }
+
+        $products = $query->get();
         
-        if(count($data['products']) > 0){
-            return response()->json($data, $data['code']);
+        if(count($products) > 0){
+            return response()->json([
+                'products' => $products,
+                'status' => 'success',
+                'message' => 'Produtos carregados com sucesso',
+                'code' => 200
+            ]);
         }
 
         return response()->json([
