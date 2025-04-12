@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('expenses', function (Blueprint $table) {
             $table->id();
+            $table->string('month');
             $table->float('expenses_current');
             $table->float('expenses_previous');
             $table->float('expenses_next');

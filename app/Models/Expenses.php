@@ -11,5 +11,5 @@ class Expenses extends Model
     use HasFactory;
 
     protected $table = 'expenses';
-    protected $fillable = ['expenses_current', 'expenses_previous', 'expenses_next', 'expenses_products', 'highest_spending_product', 'lowest_cost_product'];
+    protected $fillable = ['expenses_current', 'expenses_previous', 'expenses_next', 'expenses_products', 'highest_spending_product', 'lowest_cost_product', 'month'];
 }

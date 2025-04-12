@@ -17,6 +17,7 @@ class ExpensesFactory extends Factory
     public function definition(): array
     {
         return [
+            'month' => $this->faker->unique()->monthName(),
             'expenses_current' => $this->faker->randomFloat(2, 100, 1000),
             'expenses_previous' => $this->faker->randomFloat(2, 100, 1000),
             'expenses_next' => $this->faker->randomFloat(2, 100, 1000),
