@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Expenses;
+use App\Models\Products;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str; 
 
 class ExpensesController extends Controller
 {
@@ -14,13 +16,12 @@ class ExpensesController extends Controller
     {
         $query = Expenses::query();
 
-        if ($request->has('expenses_current')) {
-            $query->where('expenses_current', $request->expenses_current);
+        $month = $request->input('month');
+
+        if ($month) {
+            $query->where('month', 'like', '%' . $month . '%');
         }
-    
-        if ($request->has('highest_spending_product')) {
-            $query->where('highest_spending_product', $request->highest_spending_product);
-        }
+
 
         $expenses = $query->get();
 
@@ -55,15 +56,63 @@ class ExpensesController extends Controller
      */
     public function store(Request $request)
     {
-        //
-    }
+        $validated = $request->validate([
+            'month' => 'required|string',
+            'expenses_current' => 'required|numeric',
+        ]);
+    
+        $existingExpense = Expenses::where('month', $validated['month'])->first();
+    
+        if ($existingExpense) {
+            $existingExpense->expenses_current += $validated['expenses_current'];
+            $existingExpense->expenses_next = $existingExpense->expenses_current;
+            $existingExpense->save();
+    
+            return response()->json([
+                'expenses' => $existingExpense,
+                'status'   => 'success',
+                'message'  => 'Gastos atualizados com sucesso',
+                'code'     => 200
+            ]);
+        }
+    
+        $month = $validated['month'];
+        $previousExpense = Expenses::where('month', now()->parse($month)->subMonth()->format('F'))->first();
+    
+        $allProducts = Products::all();
+        $expensesProducts = $allProducts->sum('price');
+        $highestProduct = $allProducts->sortByDesc('price')->first();
+        $lowestProduct  = $allProducts->sortBy('price')->first();
+    
+        $expenses = Expenses::create([
+            'month'                    => $validated['month'],
+            'expenses_current'         => $validated['expenses_current'],
+            'expenses_previous'        => $previousExpense ? $previousExpense->expenses_current : null,
+            'expenses_next'            => $validated['expenses_current'],
+            'expenses_products'        => $expensesProducts,
+            'highest_spending_product' => $highestProduct ? $highestProduct->name : null,
+            'lowest_spending_product'  => $lowestProduct ? $lowestProduct->name : null
+        ]);
+    
+        if ($previousExpense) {
+            $previousExpense->expenses_next = $validated['expenses_current'];
+            $previousExpense->save();
+        }
+    
+        return response()->json([
+            'expenses' => $expenses,
+            'status'   => 'success',
+            'message'  => 'Gastos adicionados com sucesso',
+            'code'     => 200
+        ]);
+    }       
 
     /**
      * Display the specified resource.
      */
     public function show(Expenses $expenses)
     {
-        //
+      //
     }
 
     /**
@@ -85,8 +134,24 @@ class ExpensesController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Expenses $expenses)
+    public function destroy($id)
     {
-        //
+        $expenses = Expenses::find($id);
+
+        if (!$expenses) {
+            return response()->json([
+                'status'  => 'error',
+                'code'    => 404,
+                'message' => 'Gasto não encontrado'
+            ], 404);
+        }
+    
+        $expenses->delete();
+    
+        return response()->json([
+            'status'  => 'success',
+            'code'    => 200,
+            'message' => 'Gasto removido com sucesso'
+        ], 200);
     }
 }

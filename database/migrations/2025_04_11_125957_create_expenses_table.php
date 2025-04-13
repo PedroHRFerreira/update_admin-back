@@ -15,11 +15,11 @@ return new class extends Migration
             $table->id();
             $table->string('month');
             $table->float('expenses_current');
-            $table->float('expenses_previous');
-            $table->float('expenses_next');
-            $table->float('expenses_products');
-            $table->float('highest_spending_product');
-            $table->float('lowest_cost_product');
+            $table->float('expenses_previous')->nullable();
+            $table->float('expenses_next')->nullable();
+            $table->float('expenses_products')->nullable();
+            $table->string('highest_spending_product')->nullable();
+            $table->string('lowest_cost_product')->nullable();
             $table->timestamps();
         });
     }
