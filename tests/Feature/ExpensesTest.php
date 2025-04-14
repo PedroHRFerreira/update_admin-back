@@ -63,4 +63,24 @@ class ExpensesTest extends TestCase
         ]);
         $this->assertDatabaseHas('expenses', $payload);
     }
+    public function test_expanses_delete(): void
+    {
+        $expense = Expenses::create([
+            'month' => 'april',
+            'expenses_current' => 1000.00,
+            'expenses_previous' => 1000.00,
+            'expenses_next' => 1000.00,
+            'expenses_products' => 1000.00,
+            'highest_spending_product' => 1000.00,
+            'lowest_cost_product' => 1000.00,
+        ]);
+
+        $response = $this->delete("/api/expenses/{$expense->id}");
+        $response->dump();
+
+        $response->assertStatus(200)->assertJson([
+            'status' => 'success',
+            'message' => 'Gasto removido com sucesso'
+        ]);
+    }
 }
