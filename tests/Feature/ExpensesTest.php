@@ -42,4 +42,25 @@ class ExpensesTest extends TestCase
         $response->dump();
         $response->assertStatus(200);
     }
+
+    public function test_expanses_post(): void
+    {
+        $payload = [
+            'month' => 'april',
+            'expenses_current' => 1000.00,
+            'expenses_previous' => 1000.00,
+            'expenses_next' => 1000.00,
+            'expenses_products' => 1000.00,
+            'highest_spending_product' => 1000.00,
+            'lowest_cost_product' => 1000.00,
+        ];
+
+        $response = $this->post('/api/expenses', $payload);
+        $response->dump();
+        $response->assertStatus(200)->assertJson([
+            'status' => 'success',
+            'message' => 'Gastos adicionados com sucesso'
+        ]);
+        $this->assertDatabaseHas('expenses', $payload);
+    }
 }
