@@ -7,9 +7,6 @@ use Illuminate\Http\Request;
 
 class SalesController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         $data = [
@@ -19,7 +16,7 @@ class SalesController extends Controller
             'code' => 200
         ];
 
-        if(count($data['sales']) > 0){
+        if (count($data['sales']) > 0) {
             return response()->json($data, $data['code']);
         }
 
@@ -29,12 +26,8 @@ class SalesController extends Controller
             'message' => 'Nenhuma venda encontrada',
             'code' => 404
         ]);
-        
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -45,46 +38,52 @@ class SalesController extends Controller
             'description' => 'required|string',
         ]);
 
-        $sales = Sales::create($validated);
+        $existingSale = Sales::where('month', $validated['month'])->first();
 
-        if(!$sales){
+        if ($existingSale) {
+            $existingSale->value += $validated['value'];
+            $existingSale->quantity += $validated['quantity'];
+            $existingSale->save();
+            $sales = $existingSale;
+        } else {
+            $sales = Sales::create($validated);
+        }
+
+        if (!$sales) {
             return response()->json([
                 'sales' => [],
                 'status' => 'error',
-                'message' => 'Erro ao criar venda',
+                'message' => 'Erro ao criar ou atualizar venda',
                 'code' => 422
             ], 422);
-        } 
+        }
 
         return response()->json([
             'sales' => $sales,
             'status' => 'success',
-            'message' => 'Vendas carregados com sucesso',
+            'message' => 'Venda registrada com sucesso',
             'code' => 200
         ]);
     }
-    /**
-     * Remove the specified resource from storage.
-     */
+
     public function destroy($id)
     {
         $sales = Sales::find($id);
 
-        if(!$sales){
+        if (!$sales) {
             return response()->json([
-                'status'  => 'error',
-                'code'    => 404,
-                'message' => 'Venda não encontrado'
+                'status' => 'error',
+                'code' => 404,
+                'message' => 'Venda não encontrada'
             ], 404);
         }
 
         $sales->delete();
 
         return response()->json([
-        'status'  => 'success',
-        'code'    => 200,
-        'message' => 'Venda removido com sucesso'
+            'status' => 'success',
+            'code' => 200,
+            'message' => 'Venda removida com sucesso'
         ], 200);
-   
     }
 }
