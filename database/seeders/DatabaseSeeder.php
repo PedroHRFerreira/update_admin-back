@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             ProductsSeeder::class, 
             SalesSeeder::class,
             ExpensesSeeder::class,
+            GoalsSeeder::class
         ]);
     }
 }
