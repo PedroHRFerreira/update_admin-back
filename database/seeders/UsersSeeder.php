@@ -13,6 +13,18 @@ class UsersSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory()->count(10)->create();
+        User::truncate();
+       
+        $users = [
+            [
+                "name" => "Admin",
+                "email" => "M6l2B@example.com",
+                "password" => bcrypt("123456"),
+            ]
+        ];
+
+        foreach ($users as $user) {
+            User::create($user);
+        }
     }
 }

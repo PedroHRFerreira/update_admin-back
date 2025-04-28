@@ -8,8 +8,9 @@ class UsersController extends Controller
 {
     public function index()
     {
+        $users = User::all();
         return response()->json([
-            'users' => User::all(),
+            'users' => $users,
             'message' => 'Usuarios carregados com sucesso',
             'status' => 'success',
             'code' => 200
